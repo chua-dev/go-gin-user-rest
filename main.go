@@ -4,8 +4,10 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/chua-dev/go-gin-user-rest/controller"
+	"github.com/chua-dev/go-gin-user-rest/database"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type User struct {
@@ -19,12 +21,14 @@ var userList []User      // Return Null
 var userList2 = []User{} // Return Empty Array []
 
 func main() {
+	database.ConnectDatabase()
+
 	router := gin.Default()
 
 	userRoutes := router.Group("/users")
 	{
-		userRoutes.GET("/", GetUsers)
-		userRoutes.POST("/", CreateUser)
+		userRoutes.GET("/", controller.GetUsers)
+		userRoutes.POST("/", controller.CreateUser)
 		userRoutes.PUT("/:id", EditUser) // /users/123
 		userRoutes.DELETE("/:id", DeleteUser)
 	}
@@ -38,25 +42,6 @@ func main() {
 
 func GetUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, userList)
-}
-
-func CreateUser(c *gin.Context) {
-	var reqBody User
-	// Pointer of a struct object as param
-	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		c.JSON(422, gin.H{
-			"error":   true,
-			"message": "invalid request body",
-		})
-		return
-	}
-
-	reqBody.ID = uuid.New().String()
-
-	userList = append(userList, reqBody)
-	c.JSON(200, gin.H{
-		"error": false,
-	})
 }
 
 func EditUser(c *gin.Context) {
