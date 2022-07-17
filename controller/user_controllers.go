@@ -8,7 +8,7 @@ import (
 )
 
 type User struct {
-	ID    *int64 `json:"id"`
+	ID    int64  `json:"id"`
 	Name  string `json:"name"`
 	Age   int    `json:"age"`
 	Email string `json:"email"`
@@ -18,7 +18,7 @@ func GetUsers(c *gin.Context) {
 	var users []User
 
 	// Query Multiple Row
-	rows, err := database.DBClient.Query("SELECT Id, Name, Age, Email from user;")
+	rows, err := database.DBClient.Query("SELECT ID, Name, Age, Email from users;")
 
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
@@ -58,16 +58,18 @@ func CreateUser(c *gin.Context) {
 
 	// Execute SQL query
 	// ? scape value, prevent SQL injection Like DELETE into VALUE
-	res, err := database.DBClient.Exec("INSERT INTO user(Name, Age, Email) VALUES (?, ?, ?);",
+	res, err := database.DBClient.Exec("INSERT INTO users(Name, Age, Email) VALUES (?, ?, ?);",
 		reqBody.Name,
 		reqBody.Age,
-		reqBody.Name+"@gmail.com",
+		reqBody.Email,
 	)
 
 	if err != nil {
+
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": true,
 		})
+		panic(err.Error())
 		return
 	}
 
