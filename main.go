@@ -10,6 +10,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// User Model Mapping Structure
 type User struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
@@ -28,6 +29,7 @@ func main() {
 	userRoutes := router.Group("/users")
 	{
 		userRoutes.GET("/", controller.GetUsers)
+		userRoutes.GET("/:id", controller.GetUserById)
 		userRoutes.POST("/", controller.CreateUser)
 		userRoutes.PUT("/:id", EditUser) // /users/123
 		userRoutes.DELETE("/:id", DeleteUser)

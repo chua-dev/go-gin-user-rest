@@ -45,6 +45,21 @@ func GetUsers(c *gin.Context) {
 
 }
 
+func GetUserById(c *gin.Context) {
+	var selectedUser User
+	id := c.Param("id")
+	row := database.DBClient.QueryRow("SELECT * FROM users WHERE id = ?", id)
+	if err := row.Scan(&selectedUser.ID, &selectedUser.Name, &selectedUser.Age, &selectedUser.Email); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"status": "failed",
+			"error":  err.Error(),
+		})
+
+		return
+	}
+	c.JSON(http.StatusOK, selectedUser)
+}
+
 func CreateUser(c *gin.Context) {
 	var reqBody User
 	// Pointer of a struct object as param
@@ -69,7 +84,6 @@ func CreateUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": true,
 		})
-		panic(err.Error())
 		return
 	}
 

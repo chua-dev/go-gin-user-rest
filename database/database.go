@@ -9,7 +9,7 @@ import (
 var DBClient *sql.DB
 
 func ConnectDatabase() {
-	db, err := sql.Open("mysql", "root:hidden@tcp(localhost:3306)/godevdb?parseTime=true")
+	db, err := sql.Open("mysql", "root:devchua1995@tcp(localhost:3306)/godevdb?parseTime=true")
 	if err != nil {
 		panic(err.Error())
 	}
